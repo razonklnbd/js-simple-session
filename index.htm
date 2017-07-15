@@ -22,27 +22,17 @@ jQuery(document).ready(function($) {
 		pUsh.getJQuery()('#myHd1').html('User logged out <a id="login" href="#">Login</span>');
 	};
 	try{
-		/* SimpleSessionByJsCookie.create($, 'ssgUserSess1').ready(function(pMySess){
-			alert('session1: '+pMySess.get('initMessage')+' | '+document.getElementsByTagName('h1')[0].innerText);
-		}.bind(document)); */
-		/* SimpleSessionByJsCookie.create($, 'ssgUserSess2').ready(function(pMySess){
-			alert('session2: '+pMySess.get('initMessage'));
-		}.bind(document)); */
 		session=UserSessionHandler.create($, 'cms', WmsLoginExecuteHandler.create('http://rrs.shahadat.web/cms/')).setCallback(loginSuccessCallback, logoutDoneCallback);
-		/* $('#myHd1').html('md5: '+leh.md5('更多信息')+' | '+PjMd5.md5('更多信息')+' | '+JmMd5.md5('更多信息')); */
-		/* $('#myHd1').html('md5: '+leh.md5('更多信息')); */
 	}catch(e){
 		alert('ERR: '+e);
 	}
 	$('#myHd1').on('click', 'a#logout', function(e){
 		e.preventDefault();
-		/* alert('logout clicked! '+session.getLoggedinUserId()); */
 		session.logout();
 	}.bind(session));
 	$('#myHd1').on('click', 'a#login', function(e){
 		e.preventDefault();
 		$(this).html('please wait, logging in...');
-		/* alert('login clicked!'); */
 		try{
 			session.login('shkhan', '123456', function(pWleh, pData){
 				console.log('login deny! user logged status: '+(pWleh.getUserSessionHandler().isLoggedIn()?'Yes':'NO'));
