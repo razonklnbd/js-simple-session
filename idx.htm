@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Simple Session Object Test pg # 2 secured page!</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="js.cookie.js"></script>
+<script type="text/javascript" src="simple-session-by-js-cookie.js"></script>
+<script type="text/javascript" src="user-session-handler.js"></script>
+<script type="text/javascript" src="wms-login-execute-handler.js"></script>
+<!-- script type="text/javascript" src="paul-johnston.md5.js"></script>
+<script type="text/javascript" src="joseph-myers.md5.js"></script -->
+<script type="text/javascript">
+/*
+function lookdeep(object){
+    var collection= [], index= 0, next, item;
+    for(item in object){
+        if(object.hasOwnProperty(item)){
+            next= object[item];
+            if(typeof next== 'object' && next!= null){
+                collection[index++]= item +
+                ':{ '+ lookdeep(next).join(', ')+'}';
+            }
+            else collection[index++]= [item+':'+String(next)];
+        }
+    }
+    return collection;
+}
+*/
+jQuery(document).ready(function($) {
+	var session;
+	var loginSuccessCallback=function(pUsh){
+		console.log('login success');
+		pUsh.getJQuery()('#myHd1').html('User Logged in ['+pUsh.getLoggedinUserId()+'] welcome '+pUsh.getUserData().nickname+'! <a id="logout" href="#">Logout</span>');
+		pUsh.getJQuery()('.secret-data').show();
+		pUsh.getJQuery()('#tokenData').html(pUsh.getTokenData());
+		pUsh.getJQuery().ajax({
+			type: 'GET',
+			url: pUsh.getLoginHandler().getWmsStoreUrl()+'api/settings/id003',
+			contentType: "application/json; charset=utf-8",
+	        dataType: "json",
+	        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-Token': pUsh.getTokenData() },
+		}).done(function(data, status, obj) {
+			/* console.log('done: '+wleh.getWmsStoreUrl());
+			console.log('Ajax status: ' + status);
+			console.log('Ajax object: ' + obj);
+			console.log('Ajax data: ' + lookdeep(data)); */
+			console.log('Ajax status: ' + status);
+			pUsh.getJQuery()('#settingsValue').html(data.data.settingsValue);
+		}.bind(pUsh)).fail(function(data){
+			alert('data.status: '+data.status);
+		});
+	};
+	var logoutDoneCallback=function(pUsh){
+		console.log('logout done');
+		pUsh.getJQuery()('#myHd1').html('User logged out');
+		pUsh.getJQuery()('.secret-data').hide();
+	};
+	try{
+		session=UserSessionHandler.create($, 'cms', WmsLoginExecuteHandler.create('http://rrs.shahadat.web/cms/')).setCallback(loginSuccessCallback, logoutDoneCallback);
+	}catch(e){
+		alert('ERR: '+e);
+	}
+	$('#myHd1').on('click', 'a#logout', function(e){
+		e.preventDefault();
+		/* alert('logout clicked! '+session.getLoggedinUserId()); */
+		session.logout();
+	}.bind(session));
+});
+</script>
+</head>
+<body>
+<h1>pg # 2: <span id="myHd1"></span></h1>
+<div class="secret-data" style="display: hidden;">
+<p>this is some secret data, anyone who loggin in this system with a valid credential can view this data. please don't disclose this information to anyone even not to your spouse. this is matter of personal attitude i.e. trust. we can't prevent you to spread this message by force. but you have to understand that, you are the responsible person who need to keep this secret. best of luck!</p>
+<h3>Admin Settings: <span id="settingsValue"></span></h3>
+<p id="tokenData"></p>
+</div>
+<div><a href="./">Page # 1</a> | <a href="idx.htm">Page # 2 [secured]</a></div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Simple Session Object Test</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="js.cookie.js"></script>
+<script type="text/javascript" src="simple-session-by-js-cookie.js"></script>
+<script type="text/javascript" src="user-session-handler.js"></script>
+<script type="text/javascript" src="wms-login-execute-handler.js"></script>
+<!-- script type="text/javascript" src="paul-johnston.md5.js"></script>
+<script type="text/javascript" src="joseph-myers.md5.js"></script -->
+<script type="text/javascript">
+
+jQuery(document).ready(function($) {
+	var session;
+	var loginSuccessCallback=function(pUsh){
+		console.log('login success');
+		pUsh.getJQuery()('#myHd1').html('User Logged in ['+pUsh.getLoggedinUserId()+'] welcome '+pUsh.getUserData().nickname+'! <a id="logout" href="#">Logout</span>');
+	};
+	var logoutDoneCallback=function(pUsh){
+		console.log('logout done');
+		pUsh.getJQuery()('#myHd1').html('User logged out <a id="login" href="#">Login</span>');
+	};
+	try{
+		/* SimpleSessionByJsCookie.create($, 'ssgUserSess1').ready(function(pMySess){
+			alert('session1: '+pMySess.get('initMessage')+' | '+document.getElementsByTagName('h1')[0].innerText);
+		}.bind(document)); */
+		/* SimpleSessionByJsCookie.create($, 'ssgUserSess2').ready(function(pMySess){
+			alert('session2: '+pMySess.get('initMessage'));
+		}.bind(document)); */
+		session=UserSessionHandler.create($, 'cms', WmsLoginExecuteHandler.create('http://rrs.shahadat.web/cms/')).setCallback(loginSuccessCallback, logoutDoneCallback);
+		/* $('#myHd1').html('md5: '+leh.md5('更多信息')+' | '+PjMd5.md5('更多信息')+' | '+JmMd5.md5('更多信息')); */
+		/* $('#myHd1').html('md5: '+leh.md5('更多信息')); */
+	}catch(e){
+		alert('ERR: '+e);
+	}
+	$('#myHd1').on('click', 'a#logout', function(e){
+		e.preventDefault();
+		/* alert('logout clicked! '+session.getLoggedinUserId()); */
+		session.logout();
+	}.bind(session));
+	$('#myHd1').on('click', 'a#login', function(e){
+		e.preventDefault();
+		$(this).html('please wait, logging in...');
+		/* alert('login clicked!'); */
+		try{
+			session.login('shkhan', '123456', function(pWleh, pData){
+				console.log('login deny! user logged status: '+(pUsh.isLoggedIn()?'Yes':'NO'));
+				pWleh.getJQuery()('#myHd1').html('login deny!');
+			});
+		}catch(e){
+			alert('ERR: '+e);
+		}
+	}.bind(session));
+});
+</script>
+</head>
+<body>
+<h1>pg # 1: <span id="myHd1"></span></h1>
+<div><a href="./">Page # 1</a> | <a href="idx.htm">Page # 2 [secured]</a></div>
+</body>
+</html>
