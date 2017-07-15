@@ -45,7 +45,7 @@ jQuery(document).ready(function($) {
 		/* alert('login clicked!'); */
 		try{
 			session.login('shkhan', '123456', function(pWleh, pData){
-				console.log('login deny! user logged status: '+(pUsh.isLoggedIn()?'Yes':'NO'));
+				console.log('login deny! user logged status: '+(pWleh.getUserSessionHandler().isLoggedIn()?'Yes':'NO'));
 				pWleh.getJQuery()('#myHd1').html('login deny!');
 			});
 		}catch(e){
