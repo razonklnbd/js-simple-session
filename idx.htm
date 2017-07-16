@@ -9,22 +9,6 @@
 <script type="text/javascript" src="js/user-session-handler.js"></script>
 <script type="text/javascript" src="js/wms-login-execute-handler.js"></script>
 <script type="text/javascript">
-/*
-function lookdeep(object){
-    var collection= [], index= 0, next, item;
-    for(item in object){
-        if(object.hasOwnProperty(item)){
-            next= object[item];
-            if(typeof next== 'object' && next!= null){
-                collection[index++]= item +
-                ':{ '+ lookdeep(next).join(', ')+'}';
-            }
-            else collection[index++]= [item+':'+String(next)];
-        }
-    }
-    return collection;
-}
-*/
 jQuery(document).ready(function($) {
 	var session;
 	var loginSuccessCallback=function(pUsh){
@@ -39,10 +23,6 @@ jQuery(document).ready(function($) {
 	        dataType: "json",
 	        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-Token': pUsh.getTokenData() },
 		}).done(function(data, status, obj) {
-			/* console.log('done: '+wleh.getWmsStoreUrl());
-			console.log('Ajax status: ' + status);
-			console.log('Ajax object: ' + obj);
-			console.log('Ajax data: ' + lookdeep(data)); */
 			console.log('Ajax status: ' + status);
 			pUsh.getJQuery()('#settingsValue').html(data.data.settingsValue);
 		}.bind(pUsh)).fail(function(data){
@@ -51,8 +31,7 @@ jQuery(document).ready(function($) {
 	};
 	var logoutDoneCallback=function(pUsh){
 		console.log('logout done');
-		pUsh.getJQuery()('#myHd1').html('User logged out');
-		pUsh.getJQuery()('.secret-data').hide();
+		pUsh.getJQuery()(location).attr('href', './');
 	};
 	try{
 		session=UserSessionHandler.create($, 'cms', WmsLoginExecuteHandler.create('http://rrs.shahadat.web/cms/')).setCallback(loginSuccessCallback, logoutDoneCallback);
@@ -61,7 +40,6 @@ jQuery(document).ready(function($) {
 	}
 	$('#myHd1').on('click', 'a#logout', function(e){
 		e.preventDefault();
-		/* alert('logout clicked! '+session.getLoggedinUserId()); */
 		session.logout();
 	}.bind(session));
 });
